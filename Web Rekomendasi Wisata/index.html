@@ -17,8 +17,6 @@
         .card-zoom:hover img { transform: scale(1.1); }
     </style>
 </head>
-
-<!-- HEADER -->
 <body class="bg-[#f8fafc] text-slate-900">
 
     <nav class="glass fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center shadow-sm">
@@ -43,7 +41,7 @@
     </nav>
 
     <header id="beranda" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-40">
-        <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=2000" class="absolute inset-0 w-full h-full object-cover">
+        <img src="https://www.goersapp.com/blog/wp-content/uploads/2025/11/Wisata-Pacitan.webp" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#f8fafc]"></div>
         
         <div class="relative z-10 text-center text-white px-6 max-w-5xl">
@@ -88,9 +86,8 @@
         </div>
     </section>
 
-    <!-- DESTINASI POPULER -->
     <section id="destinasi" class="max-w-7xl mx-auto px-6 py-10">
-        <div class="mb-16">
+         <div class="mb-16">
             <div class="flex items-center gap-3 mb-6">
                 <span class="bg-blue-600 text-white p-2 rounded-lg text-xs"><i class="fas fa-fire"></i></span>
                 <h4 class="text-xl font-black text-slate-800 uppercase italic">Rekomendasi Populer</h4>
@@ -114,9 +111,6 @@
                         <a href="http://maps.google.com/2" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
                             <i class="fas fa-directions mr-1"></i> Rute
                         </a>
-                        <button onclick="openReviewModal('Goa Gong')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
-                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
-                        </button>
                     </div>
                     </div>
                 </div>
@@ -137,9 +131,6 @@
                         <a href="http://maps.google.com/2" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
                             <i class="fas fa-directions mr-1"></i> Rute
                         </a>
-                        <button onclick="openReviewModal('Goa Gong')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
-                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
-                        </button>
                     </div>
                     </div>
                 </div>
@@ -160,16 +151,13 @@
                         <a href="https://maps.google.com" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
                             <i class="fas fa-directions mr-1"></i> Rute
                         </a>
-                        <button onclick="openReviewModal('Sungai Maron')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
-                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
-                        </button>
                     </div>
                     </div>
                 </div>
 
             </div>
         </div>
-        
+
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <div>
                 <h3 class="text-4xl font-black text-slate-800 tracking-tighter uppercase italic">Katalog <span class="text-blue-600">Destinasi</span></h3>
@@ -194,9 +182,9 @@
             
             <div class="flex flex-wrap gap-2 items-center">
                 <span class="text-[10px] font-black uppercase text-slate-400 mr-2"><i class="fas fa-lock mr-1"></i> Jarak Lokasi:</span>
-                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed">< 5Km</button>
-                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed">5-15Km</button>
-                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed">> 15Km</button>
+                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed">≤ 5Km</button>
+                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed"> 5-15Km</button>
+                <button onclick="checkAccess('Filter Jarak')" class="filter-btn px-4 py-2 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed">≥ 15Km</button>
             </div>
             <p class="text-[9px] font-bold text-blue-500 italic mt-1">* Fitur ini dalam pengembangan. Login member untuk mengaktifkan filter otomatis.</p>
         </div>
@@ -536,8 +524,6 @@
         </div>
     </div>
 
-    
-
     <script>
         let isUserLoggedIn = false;
         const allCards = document.querySelectorAll('.destinasi-card');
@@ -550,17 +536,29 @@
             setTimeout(() => openModal(openId), 200);
         }
 
-        // Authentication Logic
         function handleLogin(e) {
             e.preventDefault();
+            const user = document.getElementById('login-user').value.toLowerCase();
             const pass = document.getElementById('login-pass').value;
+
             if (pass.length < 8) {
-                alert("❌ Password minimal harus 8 digit!");
+                alert("Password minimal 8 digit!");
                 return;
             }
-            isUserLoggedIn = true;
-            alert("✅ Login Berhasil! Nikmati kemudahan akses portal.");
-            closeModal('login-modal');
+
+            // Gunakan sessionStorage agar login hilang saat browser ditutup (lebih stabil untuk testing)
+            // Atau tetap localStorage jika ingin login tetap tersimpan
+            localStorage.clear(); // Bersihkan sisa login lama
+
+            if (user.includes('admin')) {
+                localStorage.setItem('userRole', 'admin');
+                alert("Login Admin Berhasil");
+                window.location.replace('admin.html');
+            } else {
+                localStorage.setItem('userRole', 'member');
+                alert("Login Member Berhasil");
+                window.location.replace('dashboard.html');
+            }
         }
 
         function handleRegister(e) {
@@ -711,5 +709,3 @@
     </div>
 </footer>
 </html>
-
-
