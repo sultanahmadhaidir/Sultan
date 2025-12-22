@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Area - PacitanDestinasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+        .sidebar-item.active { background: #2563eb; color: white !important; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+        .unlocked-feature { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .star-rating i { cursor: pointer; transition: 0.2s; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="logout-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white max-w-sm w-full rounded-[35px] p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl"><i class="fas fa-sign-out-alt"></i></div>
+            <h3 class="text-xl font-black uppercase italic tracking-tighter mb-2">Keluar Sesi?</h3>
+            <div class="flex gap-3 mt-8">
+                <button onclick="toggleElement('logout-modal', false)" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase bg-slate-100">Batal</button>
+                <button onclick="window.location.href='index.html'" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase bg-red-500 text-white">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="review-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[1001] flex items-center justify-center p-4">
+        <div class="bg-white max-w-lg w-full rounded-[40px] p-10 shadow-2xl unlocked-feature">
+            <div class="text-center mb-6">
+                <h3 id="rev-title" class="text-2xl font-black uppercase italic tracking-tighter">Ulasan & Masukan</h3>
+                <p id="rev-place-name" class="text-blue-600 text-[10px] font-black uppercase mt-1"></p>
+            </div>
+            <div class="mb-6">
+                <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Rating</label>
+                <div class="star-rating flex gap-2 text-2xl text-slate-200" id="star-input">
+                    <i class="fas fa-star" onclick="setRating(1)"></i><i class="fas fa-star" onclick="setRating(2)"></i><i class="fas fa-star" onclick="setRating(3)"></i><i class="fas fa-star" onclick="setRating(4)"></i><i class="fas fa-star" onclick="setRating(5)"></i>
+                </div>
+            </div>
+            <div class="mb-8">
+                <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Komentar / Masukan</label>
+                <textarea id="rev-comment" class="w-full bg-slate-50 border rounded-[25px] p-5 text-sm outline-none focus:border-blue-500" rows="4" placeholder="Apa yang bisa ditingkatkan dari tempat ini?"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="toggleElement('review-modal', false)" class="flex-1 py-5 rounded-2xl font-black text-[10px] uppercase bg-slate-100">Batal</button>
+                <button onclick="submitReview()" class="flex-1 py-5 rounded-2xl font-black text-[10px] uppercase bg-blue-600 text-white shadow-xl shadow-blue-200">Simpan Ulasan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex min-h-screen">
+        <aside class="w-72 bg-white border-r p-8 flex flex-col hidden lg:flex shrink-0 fixed h-full">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg"><i class="fas fa-map-marked-alt"></i></div>
+                <span class="font-black uppercase italic tracking-tighter text-xl">Pacitan<span class="text-blue-600">Member</span></span>
+            </div>
+            <nav class="space-y-2 flex-1">
+                <p class="text-[9px] font-black uppercase text-slate-400 ml-4 mb-2 tracking-widest">Menu Utama</p>
+                <button onclick="switchTab('dashboard')" id="btn-dash" class="sidebar-item active flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-th-large"></i> Dashboard</button>
+                <button onclick="switchTab('guide')" id="btn-guide" class="sidebar-item flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-user-tie"></i> Tour Guide</button>
+                <button onclick="switchTab('rental')" id="btn-rental" class="sidebar-item flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-car"></i> Rental</button>
+                <p class="text-[9px] font-black uppercase text-slate-400 ml-4 mt-6 mb-2 tracking-widest">Kontribusi</p>
+                <button onclick="switchTab('history')" id="btn-hist" class="sidebar-item flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-history"></i> Riwayat Ulasan</button>
+            </nav>
+            <button onclick="toggleElement('logout-modal', true)" class="flex items-center gap-4 p-4 w-full text-red-500 font-black text-[10px] uppercase italic tracking-widest hover:bg-red-50 rounded-2xl transition mt-auto">
+                <i class="fas fa-sign-out-alt"></i> Logout Akun
+            </button>
+        </aside>
+
+        <main class="flex-1 lg:ml-72 p-6 md:p-12">
+            
+            <div id="tab-dashboard" class="tab-content">
+                <header class="flex justify-between items-center mb-10">
+                    <h1 class="text-4xl font-black italic uppercase tracking-tighter">Eksplorasi <span class="text-blue-600">Wisata</span></h1>
+                </header>
+
+                <section class="bg-white p-6 rounded-[35px] border shadow-sm mb-10 flex flex-wrap gap-4 justify-between items-center">
+                    <div class="flex gap-2">
+                        <button onclick="filterBy('all')" class="px-6 py-2.5 rounded-full border text-[9px] font-black uppercase bg-slate-900 text-white shadow-lg">Semua</button>
+                        <button onclick="filterBy('natural')" class="px-6 py-2.5 rounded-full border text-[9px] font-black uppercase hover:bg-blue-600 transition">🌿 Alam</button>
+                        <button onclick="filterBy('artificial')" class="px-6 py-2.5 rounded-full border text-[9px] font-black uppercase hover:bg-emerald-600 transition">🏗️ Buatan</button>
+                        <button onclick="filterBy('culture')" class="px-6 py-2.5 rounded-full border text-[9px] font-black uppercase hover:bg-amber-600 transition">🏺 Budaya</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <select onchange="sortData('price', this.value)" class="px-4 py-2 rounded-full border text-[9px] font-black uppercase bg-slate-50 outline-none cursor-pointer">
+                            <option value="default">Urut Harga</option><option value="cheap">Termurah</option>
+                        </select>
+                        <select onchange="sortData('dist', this.value)" class="px-4 py-2 rounded-full border text-[9px] font-black uppercase bg-slate-50 outline-none cursor-pointer">
+                            <option value="default">Urut Jarak</option><option value="near">Terdekat</option>
+                        </select>
+                    </div>
+                </section>
+
+                <div id="destinasi-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-20"></div>
+            </div>
+
+            <div id="tab-guide" class="tab-content hidden">
+                <header class="mb-10 text-center md:text-left">
+                    <h1 class="text-4xl font-black italic uppercase tracking-tighter">Pemandu <span class="text-blue-600">Lokal</span></h1>
+                    <p class="text-slate-400 text-xs font-bold uppercase mt-2">Temani perjalananmu dengan yang ahli</p>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-8 rounded-[40px] border text-center hover:shadow-xl transition shadow-sm">
+                        <img src="https://ui-avatars.com/api/?name=Agus+Guide&background=0D8ABC&color=fff" class="w-20 h-20 rounded-[25px] mx-auto mb-4">
+                        <h4 class="font-black uppercase italic text-sm">Mas Agus</h4>
+                        <p class="text-[9px] font-bold text-slate-400 mb-6 uppercase">Spesialis Pantai Klayar</p>
+                        <button onclick="alert('Permintaan terkirim!')" class="w-full bg-blue-600 text-white py-4 rounded-2xl text-[9px] font-black uppercase">Booking Sekarang</button>
+                    </div>
+                    <div class="bg-white p-8 rounded-[40px] border text-center hover:shadow-xl transition shadow-sm">
+                        <img src="https://ui-avatars.com/api/?name=Eko+Guide&background=random" class="w-20 h-20 rounded-[25px] mx-auto mb-4">
+                        <h4 class="font-black uppercase italic text-sm">Mas Eko</h4>
+                        <p class="text-[9px] font-bold text-slate-400 mb-6 uppercase">Spesialis Goa Gong</p>
+                        <button onclick="alert('Permintaan terkirim!')" class="w-full bg-blue-600 text-white py-4 rounded-2xl text-[9px] font-black uppercase">Booking Sekarang</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-rental" class="tab-content hidden">
+                <header class="mb-10 text-center md:text-left">
+                    <h1 class="text-4xl font-black italic uppercase tracking-tighter">Rental <span class="text-blue-600">Kendaraan</span></h1>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-8 rounded-[40px] border flex gap-6 items-center shadow-sm">
+                        <div class="w-24 h-24 bg-blue-50 rounded-[30px] flex items-center justify-center text-3xl text-blue-600"><i class="fas fa-motorcycle"></i></div>
+                        <div class="flex-1">
+                            <h4 class="font-black uppercase italic text-sm">Motor Matic</h4>
+                            <p class="text-blue-600 font-black text-xs">Rp 80.000 / 24 Jam</p>
+                            <button onclick="alert('Rental motor dipesan!')" class="mt-4 bg-slate-900 text-white px-8 py-3 rounded-2xl text-[9px] font-black uppercase">Sewa</button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-[40px] border flex gap-6 items-center shadow-sm">
+                        <div class="w-24 h-24 bg-amber-50 rounded-[30px] flex items-center justify-center text-3xl text-amber-600"><i class="fas fa-car"></i></div>
+                        <div class="flex-1">
+                            <h4 class="font-black uppercase italic text-sm">Mobil Avanza</h4>
+                            <p class="text-blue-600 font-black text-xs">Rp 350.000 / 24 Jam</p>
+                            <button onclick="alert('Rental mobil dipesan!')" class="mt-4 bg-slate-900 text-white px-8 py-3 rounded-2xl text-[9px] font-black uppercase">Sewa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-history" class="tab-content hidden">
+                <header class="mb-10">
+                    <h1 class="text-4xl font-black italic uppercase tracking-tighter">Riwayat <span class="text-blue-600 text-6xl">.</span></h1>
+                </header>
+                <div id="history-list" class="space-y-4"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // PROTEKSI HALAMAN: Cek apakah sudah login & role-nya benar
+        const currentRole = localStorage.getItem('userRole');
+            if (currentRole !== 'member') {
+                window.location.replace('index.html');
+            }
+
+        // Tambahkan fungsi logout untuk menghapus kunci saat keluar
+        function handleLogout() {
+            localStorage.removeItem('userRole');
+            window.location.href = 'index.html';
+        }        
+
+        const allDestinations = [
+            { id: 1, name: "Pantai Klayar", cat: "natural", price: 15000, dist: 12.5, coords: "-8.223589309620744, 110.94710164518686", img: "https://i-car.id/wp-content/uploads/2021/06/pantai-klayar.jpg" },
+            { id: 2, name: "Goa Gong", cat: "natural", price: 20000, dist: 10.2, coords: "-8.164321985795045, 110.97986978590444", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/d35ca_1666861588.jpg" },
+            { id: 3, name: "Pantai Srau", cat: "natural", price: 10000, dist: 15.2, coords: "-8.248729869770179, 110.99490750957723", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/db24c_1741092977.jpeg" },
+            { id: 4, name: "Sungai Maron", cat: "natural", price: 0, dist: 5.5, coords: "-8.19331841506411, 110.95298349710043", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQBAoMlhDHjmPAihjdczbKZ-9AkwbcyvB3pg&s" },
+            { id: 5, name: "Pantai Watu Karung", cat: "natural", price: 10000, dist: 18.0, coords: "-8.23505338751087, 110.9726994084235", img: "https://awsimages.detik.net.id/community/media/visual/2020/06/30/pantau-watu-karung_169.jpeg?w=600&q=90" },
+            { id: 6, name: "Sentono Gentong", cat: "artificial", price: 10000, dist: 14.1, coords: "-8.218502209003535, 111.06694657899557", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROvPXpSP9KjmFkSatWa4YSRx-JOGY4KYcDBg&s" },
+            { id: 7, name: "Pantai Teleng Ria", cat: "artificial", price: 15000, dist: 2.1, coords: "-8.219230358939036, 111.07792697674982", img: "https://wisatakita.com/pariwisata/634/800-Pantai-Teleng-Ria.jpeg" },
+            { id: 8, name: "Pantai Buyutan", cat: "natural", price: 10000, dist: 22.5, coords: "-8.218822349402766, 110.92052174087652", img: "https://asset.kompas.com/crops/bOKAaKyo4BY90BBJuCZ6Vg-VQzU=/0x0:774x387/1200x800/data/photo/2018/12/13/152218242.jpg" },
+            { id: 9, name: "Goa Tabuhan", cat: "natural", price: 10000, dist: 28.4, coords: "-8.162036483925576, 110.9767871645942", img: "https://pacitanku.com/wp-content/uploads/2022/08/Goa-Tabuhan-Pacitan.jpg" },
+            { id: 10, name: "Banyu Anget Tirto Husodo", cat: "natural", price: 15000, dist: 42.1, coords: "-8.090781213507949, 111.13129581921322", img: "https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,f_auto,q_auto:best,w_640/v1634025439/01jytnxdem3dz0heed7yhz1bw3.jpg" },
+            { id: 11, name: "Pancer Door", cat: "natural", price: 0, dist: 1.2, coords: "-8.22875485569583, 111.10308857337799", img: "https://www.jogjasuper.co.id/wp-content/uploads/2024/06/wisata-Pantai-Pancer-Door-Pacitan.jpg" },
+            { id: 12, name: "Air Terjun Gringsing", cat: "natural", price: 5000, dist: 45.0, coords: "-8.019940377766925, 111.32526725750002", img: "https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/220/2024/05/26/WhatsApp-Image-2024-05-24-at-162859-2912322920.jpeg" },
+            { id: 13, name: "Monumen Sudirman", cat: "culture", price: 10000, dist: 32.0, coords: "-7.938653151513764, 111.18124666129093", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfJegxAo8JAvT0UduSVksZzZeL5wf7oNi2Q&s" }
+        ];
+
+        let myReviews = [];
+        let editingIndex = -1;
+        let currentPlace = "";
+        let selectedRating = 0;
+
+        function render(items) {
+            const grid = document.getElementById('destinasi-grid');
+            grid.innerHTML = items.map(item => `
+                <div class="destinasi-card unlocked-feature group">
+                    <div class="bg-white rounded-[45px] p-5 border shadow-sm hover:shadow-2xl transition-all duration-500">
+                        <div class="h-48 rounded-[35px] overflow-hidden relative mb-5">
+                            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            <div class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase">${item.cat}</div>
+                            <div class="absolute bottom-4 right-4 bg-white/95 px-3 py-1 rounded-full text-[8px] font-black text-blue-600 italic shadow-sm"><i class="fas fa-location-arrow mr-1"></i> ${item.dist} KM</div>
+                        </div>
+                        <h4 class="font-black uppercase italic text-slate-800 px-2">${item.name}</h4>
+                        <p class="text-blue-600 font-bold text-[10px] mb-5 px-2 italic uppercase">${item.price === 0 ? 'Gratis Masuk' : 'Rp ' + item.price.toLocaleString()}</p>
+                        <div class="flex gap-2">
+                            <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${item.coords}')" 
+                                    class="flex-[2] bg-slate-900 text-white py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition">
+                                Rute GPS
+                            </button>
+                            <button onclick="openReviewModal('${item.name}')" class="flex-1 bg-amber-50 text-amber-600 py-4 rounded-2xl text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white transition">Ulasan</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            const map = { dashboard: 'btn-dash', guide: 'btn-guide', rental: 'btn-rental', history: 'btn-hist' };
+            document.getElementById(map[tab]).classList.add('active');
+            if(tab === 'history') renderHistory();
+        }
+
+        function openReviewModal(name, index = -1) {
+            editingIndex = index;
+            currentPlace = name;
+            document.getElementById('rev-place-name').innerText = name;
+            if (index > -1) {
+                document.getElementById('rev-title').innerText = "Edit Ulasan";
+                document.getElementById('rev-comment').value = myReviews[index].comment;
+                setRating(myReviews[index].rating);
+            } else {
+                document.getElementById('rev-title').innerText = "Tulis Ulasan";
+                document.getElementById('rev-comment').value = "";
+                setRating(0);
+            }
+            toggleElement('review-modal', true);
+        }
+
+        function setRating(n) {
+            selectedRating = n;
+            document.querySelectorAll('#star-input i').forEach((s, i) => {
+                s.classList.toggle('text-amber-400', i < n);
+                s.classList.toggle('text-slate-200', i >= n);
+            });
+        }
+
+        function submitReview() {
+            const comment = document.getElementById('rev-comment').value;
+            if(!selectedRating || !comment) return alert("Mohon lengkapi data.");
+            if (editingIndex > -1) {
+                myReviews[editingIndex].rating = selectedRating;
+                myReviews[editingIndex].comment = comment;
+                alert("Ulasan diperbarui!");
+            } else {
+                myReviews.unshift({ place: currentPlace, rating: selectedRating, comment: comment, date: new Date().toLocaleDateString('id-ID') });
+                alert("Terima kasih atas masukannya!");
+            }
+            toggleElement('review-modal', false);
+            if(!document.getElementById('tab-history').classList.contains('hidden')) renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if(myReviews.length === 0) { list.innerHTML = `<div class='p-20 text-center text-slate-300 font-black uppercase italic text-xs border-2 border-dashed rounded-[40px]'>Belum ada riwayat ulasan Anda</div>`; return; }
+            list.innerHTML = myReviews.map((r, i) => `
+                <div class="bg-white p-8 rounded-[35px] border shadow-sm flex justify-between items-center unlocked-feature">
+                    <div>
+                        <div class="flex items-center gap-3"><h4 class="font-black uppercase italic text-blue-600">${r.place}</h4><span class="text-[8px] text-slate-400 font-bold">${r.date}</span></div>
+                        <div class="flex text-amber-400 text-[10px] my-2">${Array(5).fill(0).map((_, idx) => `<i class="${idx < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}</div>
+                        <p class="text-xs text-slate-500 italic">"${r.comment}"</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="openReviewModal('${r.place}', ${i})" class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition"><i class="fas fa-edit"></i></button>
+                        <button onclick="if(confirm('Hapus ulasan ini?')){myReviews.splice(${i},1);renderHistory()}" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function sortData(key, type) {
+            let sorted = [...allDestinations];
+            if(type === 'cheap' || type === 'near') sorted.sort((a,b) => a[key] - b[key]);
+            render(sorted);
+        }
+
+        function filterBy(cat) { render(cat === 'all' ? allDestinations : allDestinations.filter(d => d.cat === cat)); }
+        function toggleElement(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+        
+        render(allDestinations);
+    </script>
+</body>
+</html>
