@@ -110,10 +110,14 @@
                     <div class="p-5">
                         <h4 class="text-xl font-black uppercase italic">Pantai Klayar</h4>
                         <p class="text-xs text-slate-400 mb-4 italic">Fenomena Seruling Samudra & Sphinx Van Java.</p>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Pantai+Klayar+Pacitan" target="_blank" 
-                        class="inline-block w-full text-center bg-blue-600 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-blue-600 transition">
-                        <i class="fas fa-directions mr-2"></i> Buka Rute Navigasi
+                        <div class="flex gap-2">
+                        <a href="http://maps.google.com/2" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
+                            <i class="fas fa-directions mr-1"></i> Rute
                         </a>
+                        <button onclick="openReviewModal('Goa Gong')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
+                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
+                        </button>
+                    </div>
                     </div>
                 </div>
                 
@@ -129,10 +133,14 @@
                     <div class="p-5">
                         <h4 class="text-xl font-black uppercase italic">Goa Gong</h4>
                         <p class="text-xs text-slate-400 mb-4 italic">Goa terindah se-Asia Tenggara dengan stalaktit kristal.</p>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Goa+Gong+Pacitan" target="_blank" 
-                        class="inline-block w-full text-center bg-emerald-600 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
-                        <i class="fas fa-directions mr-2"></i> Buka Rute Navigasi
+                       <div class="flex gap-2">
+                        <a href="http://maps.google.com/2" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
+                            <i class="fas fa-directions mr-1"></i> Rute
                         </a>
+                        <button onclick="openReviewModal('Goa Gong')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
+                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
+                        </button>
+                    </div>
                     </div>
                 </div>
 
@@ -148,10 +156,14 @@
                     <div class="p-5">
                         <h4 class="text-xl font-black uppercase italic">Sungai Maroon</h4>
                         <p class="text-xs text-slate-400 mb-4 italic">Sungai Maron di Pacitan, Jawa Timur, adalah destinasi wisata alam yang dijuluki "Amazon-nya Jawa" karena keindahan sungai berair jernih berwarna biru kehijauan, dikelilingi pepohonan hijau rindang, menciptakan suasana tenang dan alami seperti Green Canyon</p>
-                        <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQBAoMlhDHjmPAihjdczbKZ-9AkwbcyvB3pg&s" target="_blank" 
-                        class="inline-block w-full text-center bg-emerald-600 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
-                        <i class="fas fa-directions mr-2"></i> Buka Rute Navigasi
+                       <div class="flex gap-2">
+                        <a href="https://maps.google.com" target="_blank" class="flex-1 text-center bg-emerald-600 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition">
+                            <i class="fas fa-directions mr-1"></i> Rute
                         </a>
+                        <button onclick="openReviewModal('Sungai Maron')" class="flex-1 text-center bg-slate-800 border border-slate-700 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition">
+                            <i class="fas fa-star mr-1 text-amber-400"></i> Ulasan
+                        </button>
+                    </div>
                     </div>
                 </div>
 
@@ -523,6 +535,8 @@
             <button onclick="closeModal('price-modal')" class="mt-10 font-black text-slate-400 uppercase text-[10px] tracking-widest hover:text-blue-600 transition">Kembali</button>
         </div>
     </div>
+
+    
 
     <script>
         let isUserLoggedIn = false;
