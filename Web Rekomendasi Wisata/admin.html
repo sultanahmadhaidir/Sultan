@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PacitanDestinasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+        .sidebar-item.active { background: #2563eb; color: white !important; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+        .unlocked-feature { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[1001] flex items-center justify-center p-4">
+        <div class="bg-white max-w-lg w-full rounded-[40px] p-10 shadow-2xl unlocked-feature">
+            <h3 id="modal-title" class="text-2xl font-black uppercase italic tracking-tighter mb-6">Tambah Data</h3>
+            <form id="admin-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <input type="hidden" id="target-type">
+                
+                <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Nama / Judul</label>
+                    <input type="text" id="form-name" class="w-full bg-slate-50 border rounded-2xl p-4 text-sm outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Harga / Tarif</label>
+                        <input type="number" id="form-price" class="w-full bg-slate-50 border rounded-2xl p-4 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Kategori / Spesialis</label>
+                        <input type="text" id="form-cat" class="w-full bg-slate-50 border rounded-2xl p-4 text-sm outline-none" placeholder="e.g. natural / motor">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-2">Link Gambar (URL)</label>
+                    <input type="text" id="form-img" class="w-full bg-slate-50 border rounded-2xl p-4 text-sm outline-none" placeholder="https://images.unsplash.com/...">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="toggleElement('admin-modal', false)" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase bg-slate-100">Batal</button>
+                    <button type="submit" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase bg-blue-600 text-white shadow-lg">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="flex min-h-screen">
+        <aside class="w-72 bg-white border-r p-8 flex flex-col hidden lg:flex shrink-0 fixed h-full">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg"><i class="fas fa-shield-alt"></i></div>
+                <span class="font-black uppercase italic tracking-tighter text-xl">Admin<span class="text-blue-600">Pacitan</span></span>
+            </div>
+            <nav class="space-y-2 flex-1">
+                <p class="text-[9px] font-black uppercase text-slate-400 ml-4 mb-2 tracking-widest">Manajemen Konten</p>
+                <button onclick="switchTab('manage-wisata')" id="btn-wisata" class="sidebar-item active flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-map-marked-alt"></i> Kelola Wisata</button>
+                <button onclick="switchTab('manage-guide')" id="btn-guide" class="sidebar-item flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-user-tie"></i> Kelola Guide</button>
+                <button onclick="switchTab('manage-rental')" id="btn-rental" class="sidebar-item flex items-center gap-4 p-4 w-full rounded-2xl font-bold text-sm text-slate-400 transition"><i class="fas fa-car"></i> Kelola Rental</button>
+            </nav>
+            <button onclick="window.location.href='index.html'" class="flex items-center gap-4 p-4 w-full text-red-500 font-black text-[10px] uppercase italic tracking-widest hover:bg-red-50 rounded-2xl transition mt-auto">
+                <i class="fas fa-sign-out-alt"></i> Keluar Admin
+            </button>
+        </aside>
+
+        <main class="flex-1 lg:ml-72 p-6 md:p-12">
+            
+            <header class="flex justify-between items-center mb-10">
+                <h1 id="page-title" class="text-4xl font-black italic uppercase tracking-tighter">Kelola <span class="text-blue-600">Wisata</span></h1>
+                <button onclick="openForm('new')" class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase italic shadow-lg shadow-blue-200">+ Tambah Data</button>
+            </header>
+
+            <div id="admin-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                </div>
+        </main>
+    </div>
+
+    <script>
+        // PROTEKSI HALAMAN ADMIN: Hanya role 'admin' yang boleh masuk
+        const currentRole = localStorage.getItem('userRole');
+            if (currentRole !== 'admin') {
+                window.location.replace('index.html');
+            }
+
+        function handleLogout() {
+            localStorage.removeItem('userRole');
+            window.location.href = 'index.html';
+        }
+
+        // Database Lokal (Awal)
+        let dataWisata = [
+            { id: 1, name: "Pantai Klayar", price: 15000, cat: "natural", img: "https://images.unsplash.com/photo-1590559063411-4796646e27a6?w=400" },
+            { id: 2, name: "Goa Gong", price: 20000, cat: "natural", img: "https://images.unsplash.com/photo-1502657877623-f66bf489d236?w=400" }
+        ];
+
+        let dataGuide = [
+            { id: 1, name: "Mas Agus", price: 150000, cat: "Pantai", img: "https://ui-avatars.com/api/?name=Agus&background=0D8ABC&color=fff" }
+        ];
+
+        let dataRental = [
+            { id: 1, name: "NMAX 2023", price: 100000, cat: "Motor", img: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400" }
+        ];
+
+        let currentTab = 'manage-wisata';
+
+        function renderAdmin() {
+            const grid = document.getElementById('admin-grid');
+            let items = [];
+            if(currentTab === 'manage-wisata') items = dataWisata;
+            if(currentTab === 'manage-guide') items = dataGuide;
+            if(currentTab === 'manage-rental') items = dataRental;
+
+            grid.innerHTML = items.map(item => `
+                <div class="bg-white rounded-[45px] p-5 border shadow-sm unlocked-feature group">
+                    <div class="h-40 rounded-[35px] overflow-hidden relative mb-5 bg-slate-100">
+                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                    </div>
+                    <div class="px-2">
+                        <span class="text-[8px] font-black uppercase text-blue-600">${item.cat}</span>
+                        <h4 class="font-black uppercase italic text-slate-800 text-lg">${item.name}</h4>
+                        <p class="text-slate-400 font-bold text-[10px] mb-6">Rp ${parseInt(item.price).toLocaleString()}</p>
+                        <div class="flex gap-2">
+                            <button onclick="openForm('edit', ${item.id})" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition">Edit</button>
+                            <button onclick="deleteData(${item.id})" class="w-14 bg-red-50 text-red-500 py-4 rounded-2xl text-[9px] font-black uppercase hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+            const btnId = tab === 'manage-wisata' ? 'btn-wisata' : (tab === 'manage-guide' ? 'btn-guide' : 'btn-rental');
+            document.getElementById(btnId).classList.add('active');
+            
+            const titles = { 'manage-wisata': 'Kelola Wisata', 'manage-guide': 'Kelola Guide', 'manage-rental': 'Kelola Rental' };
+            document.getElementById('page-title').innerHTML = `Kelola <span class="text-blue-600">${titles[tab].split(' ')[1]}</span>`;
+            
+            renderAdmin();
+        }
+
+        function openForm(mode, id = null) {
+            const modal = document.getElementById('admin-modal');
+            const form = document.getElementById('admin-form');
+            form.reset();
+            document.getElementById('edit-id').value = id;
+
+            if(mode === 'edit') {
+                document.getElementById('modal-title').innerText = "Edit Data";
+                let list = currentTab === 'manage-wisata' ? dataWisata : (currentTab === 'manage-guide' ? dataGuide : dataRental);
+                let item = list.find(x => x.id === id);
+                document.getElementById('form-name').value = item.name;
+                document.getElementById('form-price').value = item.price;
+                document.getElementById('form-cat').value = item.cat;
+                document.getElementById('form-img').value = item.img;
+            } else {
+                document.getElementById('modal-title').innerText = "Tambah Data Baru";
+            }
+            toggleElement('admin-modal', true);
+        }
+
+        document.getElementById('admin-form').onsubmit = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const newItem = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('form-name').value,
+                price: document.getElementById('form-price').value,
+                cat: document.getElementById('form-cat').value,
+                img: document.getElementById('form-img').value
+            };
+
+            let targetList = currentTab === 'manage-wisata' ? dataWisata : (currentTab === 'manage-guide' ? dataGuide : dataRental);
+
+            if(id) {
+                let idx = targetList.findIndex(x => x.id === parseInt(id));
+                targetList[idx] = newItem;
+            } else {
+                targetList.unshift(newItem);
+            }
+
+            toggleElement('admin-modal', false);
+            renderAdmin();
+        };
+
+        function deleteData(id) {
+            if(confirm("Hapus data ini secara permanen?")) {
+                if(currentTab === 'manage-wisata') dataWisata = dataWisata.filter(x => x.id !== id);
+                if(currentTab === 'manage-guide') dataGuide = dataGuide.filter(x => x.id !== id);
+                if(currentTab === 'manage-rental') dataRental = dataRental.filter(x => x.id !== id);
+                renderAdmin();
+            }
+        }
+
+        function toggleElement(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+
+        // Init
+        renderAdmin();
+    </script>
+</body>
+</html>
