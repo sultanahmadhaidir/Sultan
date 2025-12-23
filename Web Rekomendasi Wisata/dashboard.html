@@ -165,22 +165,55 @@
         function handleLogout() {
             localStorage.removeItem('userRole');
             window.location.href = 'index.html';
-        }        
+        } 
+        
+        // Rumus Haversine untuk menghitung jarak dari koordinat
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Jari-jari bumi dalam KM
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return parseFloat((R * c).toFixed(1)); 
+        }
+
+        function updateRealDistance() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+
+                    allDestinations.forEach(dest => {
+                        const [dLat, dLon] = dest.coords.split(',').map(Number);
+                        dest.dist = calculateDistance(userLat, userLon, dLat, dLon);
+                    });
+
+                    render(allDestinations);
+                }, () => {
+                    alert("Izin lokasi ditolak. Jarak akan tetap 0.");
+                    render(allDestinations);
+                });
+            } else {
+                render(allDestinations);
+            }
+        }
 
         const allDestinations = [
-            { id: 1, name: "Pantai Klayar", cat: "natural", price: 15000, dist: 12.5, coords: "-8.223589309620744, 110.94710164518686", img: "https://i-car.id/wp-content/uploads/2021/06/pantai-klayar.jpg" },
-            { id: 2, name: "Goa Gong", cat: "natural", price: 20000, dist: 10.2, coords: "-8.164321985795045, 110.97986978590444", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/d35ca_1666861588.jpg" },
-            { id: 3, name: "Pantai Srau", cat: "natural", price: 10000, dist: 15.2, coords: "-8.248729869770179, 110.99490750957723", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/db24c_1741092977.jpeg" },
-            { id: 4, name: "Sungai Maron", cat: "natural", price: 0, dist: 5.5, coords: "-8.19331841506411, 110.95298349710043", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQBAoMlhDHjmPAihjdczbKZ-9AkwbcyvB3pg&s" },
-            { id: 5, name: "Pantai Watu Karung", cat: "natural", price: 10000, dist: 18.0, coords: "-8.23505338751087, 110.9726994084235", img: "https://awsimages.detik.net.id/community/media/visual/2020/06/30/pantau-watu-karung_169.jpeg?w=600&q=90" },
-            { id: 6, name: "Sentono Gentong", cat: "artificial", price: 10000, dist: 14.1, coords: "-8.218502209003535, 111.06694657899557", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROvPXpSP9KjmFkSatWa4YSRx-JOGY4KYcDBg&s" },
-            { id: 7, name: "Pantai Teleng Ria", cat: "artificial", price: 15000, dist: 2.1, coords: "-8.219230358939036, 111.07792697674982", img: "https://wisatakita.com/pariwisata/634/800-Pantai-Teleng-Ria.jpeg" },
-            { id: 8, name: "Pantai Buyutan", cat: "natural", price: 10000, dist: 22.5, coords: "-8.218822349402766, 110.92052174087652", img: "https://asset.kompas.com/crops/bOKAaKyo4BY90BBJuCZ6Vg-VQzU=/0x0:774x387/1200x800/data/photo/2018/12/13/152218242.jpg" },
-            { id: 9, name: "Goa Tabuhan", cat: "natural", price: 10000, dist: 28.4, coords: "-8.162036483925576, 110.9767871645942", img: "https://pacitanku.com/wp-content/uploads/2022/08/Goa-Tabuhan-Pacitan.jpg" },
-            { id: 10, name: "Banyu Anget Tirto Husodo", cat: "natural", price: 15000, dist: 42.1, coords: "-8.090781213507949, 111.13129581921322", img: "https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,f_auto,q_auto:best,w_640/v1634025439/01jytnxdem3dz0heed7yhz1bw3.jpg" },
-            { id: 11, name: "Pancer Door", cat: "natural", price: 0, dist: 1.2, coords: "-8.22875485569583, 111.10308857337799", img: "https://www.jogjasuper.co.id/wp-content/uploads/2024/06/wisata-Pantai-Pancer-Door-Pacitan.jpg" },
-            { id: 12, name: "Air Terjun Gringsing", cat: "natural", price: 5000, dist: 45.0, coords: "-8.019940377766925, 111.32526725750002", img: "https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/220/2024/05/26/WhatsApp-Image-2024-05-24-at-162859-2912322920.jpeg" },
-            { id: 13, name: "Monumen Sudirman", cat: "culture", price: 10000, dist: 32.0, coords: "-7.938653151513764, 111.18124666129093", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfJegxAo8JAvT0UduSVksZzZeL5wf7oNi2Q&s" }
+            { id: 1, name: "Pantai Klayar", cat: "natural", price: 15000, dist: 0, coords: "-8.223589309620744, 110.94710164518686", img: "https://i-car.id/wp-content/uploads/2021/06/pantai-klayar.jpg" },
+            { id: 2, name: "Goa Gong", cat: "natural", price: 20000, dist: 0, coords: "-8.164321985795045, 110.97986978590444", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/d35ca_1666861588.jpg" },
+            { id: 3, name: "Pantai Srau", cat: "natural", price: 10000, dist: 0, coords: "-8.248729869770179, 110.99490750957723", img: "https://sidita.disbudpar.jatimprov.go.id/storage/foto-dtw/db24c_1741092977.jpeg" },
+            { id: 4, name: "Sungai Maron", cat: "natural", price: 0, dist: 0, coords: "-8.19331841506411, 110.95298349710043", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQBAoMlhDHjmPAihjdczbKZ-9AkwbcyvB3pg&s" },
+            { id: 5, name: "Pantai Watu Karung", cat: "natural", price: 10000, dist: 0, coords: "-8.23505338751087, 110.9726994084235", img: "https://awsimages.detik.net.id/community/media/visual/2020/06/30/pantau-watu-karung_169.jpeg?w=600&q=90" },
+            { id: 6, name: "Sentono Gentong", cat: "artificial", price: 10000, dist: 0, coords: "-8.218502209003535, 111.06694657899557", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROvPXpSP9KjmFkSatWa4YSRx-JOGY4KYcDBg&s" },
+            { id: 7, name: "Pantai Teleng Ria", cat: "artificial", price: 15000, dist: 0, coords: "-8.219230358939036, 111.07792697674982", img: "https://wisatakita.com/pariwisata/634/800-Pantai-Teleng-Ria.jpeg" },
+            { id: 8, name: "Pantai Buyutan", cat: "natural", price: 10000, dist: 0, coords: "-8.218822349402766, 110.92052174087652", img: "https://asset.kompas.com/crops/bOKAaKyo4BY90BBJuCZ6Vg-VQzU=/0x0:774x387/1200x800/data/photo/2018/12/13/152218242.jpg" },
+            { id: 9, name: "Goa Tabuhan", cat: "natural", price: 10000, dist: 0, coords: "-8.162036483925576, 110.9767871645942", img: "https://pacitanku.com/wp-content/uploads/2022/08/Goa-Tabuhan-Pacitan.jpg" },
+            { id: 10, name: "Banyu Anget Tirto Husodo", cat: "natural", price: 15000, dist: 0, coords: "-8.090781213507949, 111.13129581921322", img: "https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,f_auto,q_auto:best,w_640/v1634025439/01jytnxdem3dz0heed7yhz1bw3.jpg" },
+            { id: 11, name: "Pancer Door", cat: "natural", price: 0, dist: 0, coords: "-8.22875485569583, 111.10308857337799", img: "https://www.jogjasuper.co.id/wp-content/uploads/2024/06/wisata-Pantai-Pancer-Door-Pacitan.jpg" },
+            { id: 12, name: "Air Terjun Gringsing", cat: "natural", price: 5000, dist: 0, coords: "-8.019940377766925, 111.32526725750002", img: "https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/220/2024/05/26/WhatsApp-Image-2024-05-24-at-162859-2912322920.jpeg" },
+            { id: 13, name: "Monumen Sudirman", cat: "culture", price: 10000, dist: 0, coords: "-7.938653151513764, 111.18124666129093", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfJegxAo8JAvT0UduSVksZzZeL5wf7oNi2Q&s" }
         ];
 
         let myReviews = [];
@@ -287,7 +320,7 @@
         function filterBy(cat) { render(cat === 'all' ? allDestinations : allDestinations.filter(d => d.cat === cat)); }
         function toggleElement(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
         
-        render(allDestinations);
+        window.onload = updateRealDistance;
     </script>
 </body>
 </html>
