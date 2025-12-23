@@ -735,6 +735,93 @@
                 });
             }
         }
+
+        // SCRIPT REKOMENDASI SISTEM TOP 3 
+        // Data Embed dari Python
+        const allSpots = [{"place_name":"Beiji Park","category":"Wisata Buatan","price":15000,"lat":-8.17,"lon":111.08,"rating":3.8,"review_text":"Tempatnya sangat instagramable, cocok untuk anak-anak. Tiketnya standar."},{"place_name":"Etalase Geopark Gunung Sewu","category":"Wisata Budaya","price":0,"lat":-8.205,"lon":111.05,"rating":3.6,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Goa Gong","category":"Wisata Alam","price":20000,"lat":-8.165,"lon":111.025,"rating":3.6,"review_text":"Sangat indah, tapi akses jalan lumayan menantang. backpacker wajib kesini."},{"place_name":"Goa Tabuhan","category":"Wisata Alam","price":10000,"lat":-8.15,"lon":111.01,"rating":3.9,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Kampung Susu Lawu (Cabang)","category":"Wisata Buatan","price":20000,"lat":-8.18,"lon":111.12,"rating":3.8,"review_text":"Sangat bersih, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Masjid Agung Darul Falah","category":"Wisata Budaya","price":0,"lat":-8.2,"lon":111.095,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat ramai sekali."},{"place_name":"Monumen Jenderal Sudirman","category":"Wisata Budaya","price":5000,"lat":-8.12,"lon":111.18,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Museum Song Terus","category":"Wisata Budaya","price":0,"lat":-8.14,"lon":111.005,"rating":4.0,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat sejuk sekali."},{"place_name":"Pantai Banyu Tibo","category":"Wisata Alam","price":10000,"lat":-8.22,"lon":110.98,"rating":4.0,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya edukatif."},{"place_name":"Pantai Kasap","category":"Wisata Alam","price":10000,"lat":-8.23,"lon":111.01,"rating":4.2,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat indah sekali."},{"place_name":"Pantai Klayar","category":"Wisata Alam","price":15000,"lat":-8.216,"lon":110.95,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali."},{"place_name":"Pantai Pidakan","category":"Wisata Alam","price":5000,"lat":-8.25,"lon":111.2,"rating":4.0,"review_text":"Kurang edukatif dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Pantai Srau","category":"Wisata Alam","price":10000,"lat":-8.24,"lon":111.05,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. fotografer wajib kesini."},{"place_name":"Pantai Teleng Ria","category":"Wisata Alam","price":15000,"lat":-8.21,"lon":111.1,"rating":3.2,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya standar."},{"place_name":"Pantai Watukarung","category":"Wisata Alam","price":10000,"lat":-8.235,"lon":111.03,"rating":4.4,"review_text":"Tempatnya sangat bersih, cocok untuk anak-anak. Tiketnya terjangkau."},{"place_name":"Pemandian Banyu Anget","category":"Wisata Buatan","price":15000,"lat":-8.1,"lon":111.15,"rating":3.8,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Rumah Masa Kecil SBY","category":"Wisata Budaya","price":0,"lat":-8.195,"lon":111.11,"rating":3.8,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Sentono Gentong","category":"Wisata Buatan","price":10000,"lat":-8.19,"lon":111.09,"rating":3.9,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya terjangkau."},{"place_name":"Sungai Maron","category":"Wisata Alam","price":5000,"lat":-8.18,"lon":111.0,"rating":4.1,"review_text":"Kurang megah dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Taman Kota Pacitan","category":"Wisata Buatan","price":0,"lat":-8.2,"lon":111.1,"rating":4.5,"review_text":"Tempatnya sangat ramai, cocok untuk fotografer. Tiketnya terjangkau."}];
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            // Rumus Euclidean sederhana untuk jarak dekat (cukup akurat untuk skala 1 kota)
+            // Hasil bukan KM akurat, tapi nilai relatif untuk sorting
+            const a = lat1 - lat2;
+            const b = lon1 - lon2;
+            return Math.sqrt(a*a + b*b);
+        }
+
+        function getRecommendations() {
+            const selectedCat = document.getElementById('categoryInput').value;
+            const maxBudget = parseInt(document.getElementById('budgetInput').value);
+
+            // 1. Filter Data (Kategori & Budget)
+            let filtered = allSpots.filter(spot => 
+                spot.category === selectedCat && 
+                spot.price <= maxBudget
+            );
+
+            if (filtered.length === 0) {
+                alert("Maaf, tidak ada wisata dengan kriteria tersebut. Coba naikkan budget.");
+                return;
+            }
+
+            // 2. Cari Ranking 1 (Rating Tertinggi)
+            // Sort by Rating Descending
+            filtered.sort((a, b) => b.rating - a.rating);
+            const topSpot = filtered[0]; // Juara 1
+
+            // 3. Cari 2 Tempat Lain yang Paling Dekat dengan Juara 1 (Nearest Neighbors)
+            // Kita hitung jarak semua sisa filtered ke topSpot
+            const others = filtered.slice(1).map(spot => {
+                spot.distanceToTop = calculateDistance(topSpot.lat, topSpot.lon, spot.lat, spot.lon);
+                return spot;
+            });
+
+            // Sort berdasarkan jarak terdekat
+            others.sort((a, b) => a.distanceToTop - b.distanceToTop);
+
+            // Gabungkan Juara 1 + 2 Terdekat
+            const finalRecs = [topSpot, ...others.slice(0, 2)];
+
+            // Render HTML
+            const container = document.getElementById('cardsWrapper');
+            container.innerHTML = '';
+            
+            finalRecs.forEach((spot, index) => {
+                let rankLabel = index === 0 ? "🏆 Pilihan Utama" : `📍 Rute Terdekat #${index}`;
+                let colorClass = index === 0 ? "border-yellow-400 border-2" : "border-gray-100";
+                
+                const card = `
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition ${colorClass} flex flex-col">
+                        <div class="p-1 bg-gray-100 text-xs text-center font-bold uppercase tracking-wide text-gray-600">
+                            ${rankLabel}
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-900">${spot.place_name}</h3>
+                                <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">
+                                    Rp ${spot.price.toLocaleString()}
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center mb-4">
+                                <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+                                <span class="font-bold text-gray-700">${spot.rating}</span>
+                                <span class="text-gray-400 text-xs ml-2">(${spot.category})</span>
+                            </div>
+                            
+                            <p class="text-gray-600 text-sm mb-4 italic flex-1">"${spot.review_text}..."</p>
+                            
+                            <div class="mt-auto border-t pt-4 text-xs text-gray-500 flex justify-between">
+                                <span><i class="fas fa-map-marker-alt"></i> Lat: ${spot.lat}</span>
+                                <span><i class="far fa-clock"></i> Ulasan Baru</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+
+            document.getElementById('resultContainer').classList.remove('hidden');
+        }
     </script>
 </body>
 <footer class="bg-slate-950 text-white py-16 border-t border-white/5">
@@ -771,5 +858,6 @@
     </div>
 </footer>
 </html>
+
 
 
