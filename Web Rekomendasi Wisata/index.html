@@ -15,6 +15,30 @@
         .destinasi-card { transition: 0.4s ease-in-out; }
         .hidden-card { display: none; }
         .card-zoom:hover img { transform: scale(1.1); }
+
+        /* NEW CODE  */
+         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f4f8; }
+        .glass { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        
+        .chip {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #cbd5e1;
+            background-color: white;
+            color: #64748b;
+            user-select: none;
+        }
+        .chip:hover { background-color: #f1f5f9; transform: translateY(-1px); }
+        .chip.active {
+            background-color: #2563eb; color: white; border-color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+        
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-900">
@@ -170,7 +194,10 @@
                             <i class="fas fa-directions mr-1"></i> Rute
                         </a>
                     </div> -->
-        <div class="max-w-5xl mx-auto">
+
+
+        
+        <!-- <div class="max-w-5xl mx-auto">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-slate-800 mb-2">🌴 Pacitan Trip Planner</h1>
             <p class="text-slate-500">Rekomendasi Wisata Cerdas berbasis Kategori & Budget</p>
@@ -199,9 +226,82 @@
                     </button>
                 </div>
             </div>
+        </div> -->
+
+
+        <!-- REVISI REKOMENDASI  -->
+
+<div class="glass rounded-3xl p-6 mb-8 relative overflow-hidden">
+            <h2 class="font-bold text-xl text-slate-800 mb-6 flex items-center gap-2">
+                <i class="fas fa-filter text-blue-600"></i> Cari Wisata Impian
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div class="md:col-span-4 space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">1. Kategori Wisata</label>
+                        <select id="kategori" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Semua">Semua Kategori</option>
+                            <option value="Wisata Alam">🌲 Wisata Alam</option>
+                            <option value="Wisata Buatan">🎡 Wisata Buatan</option>
+                            <option value="Wisata Budaya">🏛️ Wisata Budaya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">2. Maksimal Budget</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3.5 text-slate-400 font-bold">Rp</span>
+                            <input type="number" id="harga" placeholder="Cth: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-8">
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-3">3. Pilih Tema (AI Labeling)</label>
+                    <div id="theme-container" class="flex flex-wrap gap-2 max-h-[160px] overflow-y-auto pr-2">
+                        </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-100">
+                <button onclick="runFilter()" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-black text-lg py-4 rounded-xl shadow-lg transition transform hover:scale-[1.01] active:scale-95">
+                    <i class="fas fa-search mr-2"></i> CARI REKOMENDASI
+                </button>
+                <p class="text-center text-xs text-slate-400 mt-2">Klik tombol untuk menampilkan hasil rekomendasi.</p>
+            </div>
+        </div>
+        
+
+<div id="top3-list" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"></div>
+
+            <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-900 to-indigo-900 shadow-2xl rounded-3xl -skew-y-1 transform origin-bottom-left"></div>
+                <div class="relative z-10 p-8 md:p-10">
+                    <div class="mb-8 border-b border-white/10 pb-4">
+                        <h3 class="text-xl font-bold text-yellow-300 flex items-center gap-2">
+                            <i class="fas fa-network-wired"></i> Paket Perjalanan (Asosiasi)
+                        </h3>
+                        <p class="text-blue-200 text-sm mt-1">
+                            Pengunjung juga sering melihat tempat ini:
+                        </p>
+                    </div>
+                    <div id="related-list" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+                </div>
+            </div>
         </div>
 
-        <div id="resultContainer" class="hidden">
+        <div id="empty" class="text-center py-24 hidden">
+            <div class="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
+                <i class="fas fa-search-location text-4xl text-slate-300"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-600">Wisata tidak ditemukan</h3>
+            <p class="text-slate-400 mt-2">Coba sesuaikan filter kategori, budget, atau tema.</p>
+        </div>
+
+    </div>
+
+        
+        <!-- <div id="resultContainer" class="hidden">
             <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center">
                 <i class="fas fa-medal text-yellow-500 mr-2"></i> Top 3 Rekomendasi (Terdekat & Terbaik)
             </h2>
@@ -215,10 +315,10 @@
             </div>
         </div>
                     </div>
-                </div>
+                </div> -->
 
-            </div>
-        </div>
+            <!-- </div>
+        </div> -->
 
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <div>
@@ -736,94 +836,265 @@
             }
         }
 
-        // SCRIPT REKOMENDASI SISTEM TOP 3 
-        // Data Embed dari Python
-        const allSpots = [{"place_name":"Beiji Park","category":"Wisata Buatan","price":15000,"lat":-8.17,"lon":111.08,"rating":3.8,"review_text":"Tempatnya sangat instagramable, cocok untuk anak-anak. Tiketnya standar."},{"place_name":"Etalase Geopark Gunung Sewu","category":"Wisata Budaya","price":0,"lat":-8.205,"lon":111.05,"rating":3.6,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Goa Gong","category":"Wisata Alam","price":20000,"lat":-8.165,"lon":111.025,"rating":3.6,"review_text":"Sangat indah, tapi akses jalan lumayan menantang. backpacker wajib kesini."},{"place_name":"Goa Tabuhan","category":"Wisata Alam","price":10000,"lat":-8.15,"lon":111.01,"rating":3.9,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Kampung Susu Lawu (Cabang)","category":"Wisata Buatan","price":20000,"lat":-8.18,"lon":111.12,"rating":3.8,"review_text":"Sangat bersih, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Masjid Agung Darul Falah","category":"Wisata Budaya","price":0,"lat":-8.2,"lon":111.095,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat ramai sekali."},{"place_name":"Monumen Jenderal Sudirman","category":"Wisata Budaya","price":5000,"lat":-8.12,"lon":111.18,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Museum Song Terus","category":"Wisata Budaya","price":0,"lat":-8.14,"lon":111.005,"rating":4.0,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat sejuk sekali."},{"place_name":"Pantai Banyu Tibo","category":"Wisata Alam","price":10000,"lat":-8.22,"lon":110.98,"rating":4.0,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya edukatif."},{"place_name":"Pantai Kasap","category":"Wisata Alam","price":10000,"lat":-8.23,"lon":111.01,"rating":4.2,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat indah sekali."},{"place_name":"Pantai Klayar","category":"Wisata Alam","price":15000,"lat":-8.216,"lon":110.95,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali."},{"place_name":"Pantai Pidakan","category":"Wisata Alam","price":5000,"lat":-8.25,"lon":111.2,"rating":4.0,"review_text":"Kurang edukatif dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Pantai Srau","category":"Wisata Alam","price":10000,"lat":-8.24,"lon":111.05,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. fotografer wajib kesini."},{"place_name":"Pantai Teleng Ria","category":"Wisata Alam","price":15000,"lat":-8.21,"lon":111.1,"rating":3.2,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya standar."},{"place_name":"Pantai Watukarung","category":"Wisata Alam","price":10000,"lat":-8.235,"lon":111.03,"rating":4.4,"review_text":"Tempatnya sangat bersih, cocok untuk anak-anak. Tiketnya terjangkau."},{"place_name":"Pemandian Banyu Anget","category":"Wisata Buatan","price":15000,"lat":-8.1,"lon":111.15,"rating":3.8,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Rumah Masa Kecil SBY","category":"Wisata Budaya","price":0,"lat":-8.195,"lon":111.11,"rating":3.8,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Sentono Gentong","category":"Wisata Buatan","price":10000,"lat":-8.19,"lon":111.09,"rating":3.9,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya terjangkau."},{"place_name":"Sungai Maron","category":"Wisata Alam","price":5000,"lat":-8.18,"lon":111.0,"rating":4.1,"review_text":"Kurang megah dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Taman Kota Pacitan","category":"Wisata Buatan","price":0,"lat":-8.2,"lon":111.1,"rating":4.5,"review_text":"Tempatnya sangat ramai, cocok untuk fotografer. Tiketnya terjangkau."}];
+        // NEW SCRIPT REKOMENDASI + ASOSIASI 
+         const db = [{"place_name":"Beiji Park","category":"Wisata Buatan","price":15000,"lat":"-8.205703312","lon":111.0615005,"rating":4.0,"ai_score":99.2871963619,"review_text":"Kurang bersih dibanding tempat lain, tapi lumayan untuk sekedar mampir.","themes_list":["Instagramable","Gunung","Keluarga"],"final_score":91.6,"related_places":["Pemandian Banyu Anget","Sentono Gentong","Taman Kota Pacitan"]},{"place_name":"Etalase Geopark Gunung Sewu","category":"Wisata Budaya","price":0,"lat":"-8.02640006","lon":110.5874024,"rating":3.8,"ai_score":99.3410654456,"review_text":"Kurang instagramable dibanding tempat lain, tapi lumayan untuk sekedar mampir.","themes_list":["Instagramable","Gunung","Keluarga"],"final_score":89.6,"related_places":["Masjid Agung Darul Falah","Monumen Jenderal Sudirman","Museum Song Terus","Rumah Masa Kecil Sby"]},{"place_name":"Goa Gong","category":"Wisata Alam","price":20000,"lat":"-8.164204009","lon":110.9799578,"rating":3.3,"ai_score":99.5923803634,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali.","themes_list":["Instagramable","Keluarga","Goa"],"final_score":86.4,"related_places":["Goa Tabuhan","Pantai Kasap","Pantai Klayar","Pantai Srau","Pantai Teleng Ria"]},{"place_name":"Goa Tabuhan","category":"Wisata Alam","price":10000,"lat":"-8.125340279","lon":110.9833972,"rating":3.9,"ai_score":99.7562489353,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali.","themes_list":["Instagramable","Keluarga","Goa"],"final_score":90.9,"related_places":["Goa Gong","Pantai Kasap","Pantai Klayar","Pantai Srau","Pantai Teleng Ria"]},{"place_name":"Masjid Agung Darul Falah","category":"Wisata Budaya","price":0,"lat":"-8.2","lon":111.095,"rating":3.8,"ai_score":99.7895543854,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya megah.","themes_list":["Instagramable","Keluarga"],"final_score":89.9,"related_places":["Etalase Geopark Gunung Sewu","Monumen Jenderal Sudirman","Museum Song Terus","Rumah Masa Kecil Sby"]},{"place_name":"Monumen Jenderal Sudirman","category":"Wisata Budaya","price":5000,"lat":"-7.900731996","lon":111.1807813,"rating":4.0,"ai_score":99.725876688,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. keluarga wajib kesini.","themes_list":["Instagramable","Sejarah","Keluarga"],"final_score":91.8,"related_places":["Etalase Geopark Gunung Sewu","Masjid Agung Darul Falah","Museum Song Terus","Rumah Masa Kecil Sby"]},{"place_name":"Museum Song Terus","category":"Wisata Budaya","price":0,"lat":"-8.128740377","lon":110.9833278,"rating":3.6,"ai_score":99.4484016826,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali.","themes_list":["Instagramable","Sejarah","Keluarga"],"final_score":88.8,"related_places":["Etalase Geopark Gunung Sewu","Masjid Agung Darul Falah","Monumen Jenderal Sudirman","Rumah Masa Kecil Sby"]},{"place_name":"Pantai Banyu Tibo","category":"Wisata Alam","price":10000,"lat":"-8.211213009","lon":110.9131447,"rating":3.5,"ai_score":99.7798294894,"review_text":"Tempatnya sangat tenang, cocok untuk anak-anak. Tiketnya terjangkau.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":87.9,"related_places":["Pantai Kasap","Pantai Klayar","Pantai Srau","Pantai Watukarung","Sungai Maron"]},{"place_name":"Pantai Kasap","category":"Wisata Alam","price":10000,"lat":"-8.23918131","lon":110.9830716,"rating":4.2,"ai_score":99.6382555191,"review_text":"Kurang megah dibanding tempat lain, tapi lumayan untuk sekedar mampir.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":93.1,"related_places":["Goa Gong","Goa Tabuhan","Pantai Banyu Tibo","Pantai Klayar","Pantai Srau"]},{"place_name":"Pantai Klayar","category":"Wisata Alam","price":15000,"lat":"-8.223541154","lon":110.9460522,"rating":4.2,"ai_score":99.7533647963,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":93.5,"related_places":["Goa Gong","Goa Tabuhan","Pantai Banyu Tibo","Pantai Kasap","Pantai Pidakan"]},{"place_name":"Pantai Pidakan","category":"Wisata Alam","price":5000,"lat":"-8.250945933","lon":111.2442311,"rating":4.0,"ai_score":99.777793466,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":91.9,"related_places":["Pantai Klayar","Pantai Srau","Pantai Watukarung"]},{"place_name":"Pantai Srau","category":"Wisata Alam","price":10000,"lat":"-8.249418178","lon":110.9941654,"rating":3.5,"ai_score":99.7414679094,"review_text":"Tempatnya sangat tenang, cocok untuk pasangan. Tiketnya terjangkau.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":87.8,"related_places":["Goa Gong","Goa Tabuhan","Pantai Banyu Tibo","Pantai Kasap","Pantai Klayar"]},{"place_name":"Pantai Teleng Ria","category":"Wisata Alam","price":15000,"lat":"-8.219719802","lon":111.0770547,"rating":4.0,"ai_score":99.7652639027,"review_text":"Tempatnya sangat megah, cocok untuk keluarga. Tiketnya standar.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":91.9,"related_places":["Goa Gong","Goa Tabuhan","Pantai Kasap","Pantai Klayar","Pantai Srau"]},{"place_name":"Pantai Watukarung","category":"Wisata Alam","price":10000,"lat":"-8.20710654","lon":110.9681482,"rating":3.6,"ai_score":99.6325273662,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya bersih.","themes_list":["Instagramable","Pantai","Keluarga"],"final_score":88.8,"related_places":["Goa Gong","Goa Tabuhan","Pantai Banyu Tibo","Pantai Kasap","Pantai Klayar"]},{"place_name":"Pemandian Banyu Anget","category":"Wisata Buatan","price":15000,"lat":"-8.090823394","lon":111.1312102,"rating":4.0,"ai_score":99.6360480602,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable.","themes_list":["Instagramable","Keluarga"],"final_score":91.8,"related_places":["Beiji Park","Sentono Gentong","Taman Kota Pacitan"]},{"place_name":"Rumah Masa Kecil Sby","category":"Wisata Budaya","price":0,"lat":"-8.201442158","lon":111.100337,"rating":4.1,"ai_score":99.8065841774,"review_text":"Sangat edukatif, tapi akses jalan lumayan menantang. pasangan wajib kesini.","themes_list":["Instagramable","Sejarah","Keluarga"],"final_score":92.6,"related_places":["Etalase Geopark Gunung Sewu","Masjid Agung Darul Falah","Monumen Jenderal Sudirman","Museum Song Terus"]},{"place_name":"Sentono Gentong","category":"Wisata Buatan","price":10000,"lat":"-8.218449837","lon":111.0671059,"rating":4.0,"ai_score":99.491368131,"review_text":"Tempatnya sangat bersih, cocok untuk backpacker. Tiketnya terjangkau.","themes_list":["Instagramable","Gunung","Keluarga"],"final_score":91.7,"related_places":["Beiji Park","Pemandian Banyu Anget","Taman Kota Pacitan"]},{"place_name":"Sungai Maron","category":"Wisata Alam","price":5000,"lat":"-8.202426965","lon":110.9549608,"rating":3.3,"ai_score":99.689799003,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat tenang sekali.","themes_list":["Instagramable","Sungai","Keluarga"],"final_score":86.1,"related_places":["Goa Gong","Goa Tabuhan","Pantai Banyu Tibo","Pantai Kasap","Pantai Srau"]},{"place_name":"Taman Kota Pacitan","category":"Wisata Buatan","price":0,"lat":"-8.194491837","lon":111.1031676,"rating":4.0,"ai_score":99.4357739653,"review_text":"Kurang instagramable dibanding tempat lain, tapi lumayan untuk sekedar mampir.","themes_list":["Instagramable","Keluarga"],"final_score":91.7,"related_places":["Beiji Park","Pemandian Banyu Anget","Sentono Gentong"]}];
+        const availableThemes = ["Goa", "Gunung", "Instagramable", "Keluarga", "Pantai", "Sejarah", "Sungai"];
+        let currentTheme = 'Semua';
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            // Rumus Euclidean sederhana untuk jarak dekat (cukup akurat untuk skala 1 kota)
-            // Hasil bukan KM akurat, tapi nilai relatif untuk sorting
-            const a = lat1 - lat2;
-            const b = lon1 - lon2;
-            return Math.sqrt(a*a + b*b);
+        function initChips() {
+            const container = document.getElementById('theme-container');
+            
+            let allBtn = document.createElement('div');
+            allBtn.className = 'chip active';
+            allBtn.innerText = 'Semua';
+            allBtn.onclick = function() { selectTheme('Semua', this); };
+            container.appendChild(allBtn);
+
+            availableThemes.forEach(theme => {
+                let btn = document.createElement('div');
+                btn.className = 'chip';
+                btn.innerText = theme;
+                btn.onclick = function() { selectTheme(theme, this); };
+                container.appendChild(btn);
+            });
         }
 
-        function getRecommendations() {
-            const selectedCat = document.getElementById('categoryInput').value;
-            const maxBudget = parseInt(document.getElementById('budgetInput').value);
+        function selectTheme(theme, element) {
+            currentTheme = theme;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            // Manual trigger required via button
+        }
 
-            // 1. Filter Data (Kategori & Budget)
-            let filtered = allSpots.filter(spot => 
-                spot.category === selectedCat && 
-                spot.price <= maxBudget
-            );
+        function runFilter() {
+            const cat = document.getElementById('kategori').value;
+            let budgetInput = document.getElementById('harga').value;
+            let budget = budgetInput ? parseInt(budgetInput) : 999999999;
 
-            if (filtered.length === 0) {
-                alert("Maaf, tidak ada wisata dengan kriteria tersebut. Coba naikkan budget.");
+            let filtered = db.filter(item => {
+                let matchCat = (cat === 'Semua') ? true : item.category === cat;
+                
+                // Cek tema dari list
+                let matchTheme = true;
+                if (currentTheme !== 'Semua') {
+                    matchTheme = item.themes_list && item.themes_list.includes(currentTheme);
+                }
+
+                let matchPrice = item.price <= budget;
+
+                return matchCat && matchTheme && matchPrice;
+            });
+
+            const resDiv = document.getElementById('results');
+            const empDiv = document.getElementById('empty');
+
+            if(filtered.length === 0) {
+                resDiv.classList.add('hidden');
+                empDiv.classList.remove('hidden');
                 return;
             }
 
-            // 2. Cari Ranking 1 (Rating Tertinggi)
-            // Sort by Rating Descending
-            filtered.sort((a, b) => b.rating - a.rating);
-            const topSpot = filtered[0]; // Juara 1
+            resDiv.classList.remove('hidden');
+            empDiv.classList.add('hidden');
 
-            // 3. Cari 2 Tempat Lain yang Paling Dekat dengan Juara 1 (Nearest Neighbors)
-            // Kita hitung jarak semua sisa filtered ke topSpot
-            const others = filtered.slice(1).map(spot => {
-                spot.distanceToTop = calculateDistance(topSpot.lat, topSpot.lon, spot.lat, spot.lon);
-                return spot;
-            });
+            // Sort: Final Score
+            filtered.sort((a,b) => b.final_score - a.final_score);
 
-            // Sort berdasarkan jarak terdekat
-            others.sort((a, b) => a.distanceToTop - b.distanceToTop);
+            const top3 = filtered.slice(0, 3);
+            renderTop3(top3);
 
-            // Gabungkan Juara 1 + 2 Terdekat
-            const finalRecs = [topSpot, ...others.slice(0, 2)];
+            // Related
+            if(top3.length > 0) {
+                const champion = top3[0];
+                let relatedNames = champion.related_places;
+                let relatedObjs = db.filter(d => relatedNames.includes(d.place_name) && d.place_name !== champion.place_name);
+                if(relatedObjs.length < 5) {
+                    let others = filtered.filter(d => d.place_name !== champion.place_name && !relatedNames.includes(d.place_name));
+                    relatedObjs = relatedObjs.concat(others);
+                }
+                renderRelated(relatedObjs.slice(0, 5));
+            }
+            
+            // Scroll to results
+            resDiv.scrollIntoView({behavior: "smooth"});
+        }
 
-            // Render HTML
-            const container = document.getElementById('cardsWrapper');
+        function renderTop3(items) {
+            const container = document.getElementById('top3-list');
             container.innerHTML = '';
             
-            finalRecs.forEach((spot, index) => {
-                let rankLabel = index === 0 ? "🏆 Pilihan Utama" : `📍 Rute Terdekat #${index}`;
-                let colorClass = index === 0 ? "border-yellow-400 border-2" : "border-gray-100";
-                
-                const card = `
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition ${colorClass} flex flex-col">
-                        <div class="p-1 bg-gray-100 text-xs text-center font-bold uppercase tracking-wide text-gray-600">
-                            ${rankLabel}
+            items.forEach((item, idx) => {
+                let style = idx === 0 ? 'border-2 border-yellow-400 ring-4 ring-yellow-50 transform scale-[1.02]' : 'border border-slate-100 hover:scale-[1.01]';
+                let badgeColor = '';
+                if(item.category === 'Wisata Alam') badgeColor = 'bg-green-100 text-green-700';
+                else if(item.category === 'Wisata Buatan') badgeColor = 'bg-blue-100 text-blue-700';
+                else badgeColor = 'bg-orange-100 text-orange-700';
+
+                // Display Tags
+                let tagsHtml = item.themes_list.slice(0, 4).map(tag => 
+                    `<span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded-full border border-slate-200">${tag}</span>`
+                ).join('');
+
+                container.innerHTML += `
+                    <div class="bg-white rounded-2xl p-6 ${style} shadow-lg flex flex-col h-full transition duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-black uppercase px-2 py-1 rounded-md ${badgeColor} tracking-wide">
+                                ${item.category}
+                            </span>
+                            <div class="text-right">
+                                <div class="text-xs font-bold text-slate-400">AI SCORE</div>
+                                <div class="text-2xl font-black text-blue-600 leading-none">${item.final_score}</div>
+                            </div>
                         </div>
-                        <div class="p-6 flex-1 flex flex-col">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-gray-900">${spot.place_name}</h3>
-                                <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">
-                                    Rp ${spot.price.toLocaleString()}
+
+                        <h3 class="font-bold text-xl text-slate-800 mb-2 leading-tight">${item.place_name}</h3>
+                        
+                        <div class="flex gap-1 mb-4 flex-wrap">
+                            ${tagsHtml}
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs text-slate-500 italic line-clamp-3">
+                                <i class="fas fa-quote-left text-slate-300 mr-1"></i>
+                                ${item.review_text}
+                            </p>
+                        </div>
+
+                        <div class="mt-auto pt-4 border-t border-slate-100 flex justify-between items-end">
+                             <div>
+                                <div class="text-xs text-slate-400 font-bold mb-1">Rating</div>
+                                <div class="text-sm font-bold text-yellow-500 flex items-center gap-1">
+                                    <i class="fas fa-star"></i> ${item.rating}
+                                </div>
+                             </div>
+                             <div class="text-right">
+                                <div class="text-xs text-slate-400 font-bold mb-1">Tiket Masuk</div>
+                                <span class="text-green-600 font-bold text-lg">
+                                    ${item.price === 0 ? 'Gratis' : 'Rp ' + item.price.toLocaleString()}
                                 </span>
-                            </div>
-                            
-                            <div class="flex items-center mb-4">
-                                <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
-                                <span class="font-bold text-gray-700">${spot.rating}</span>
-                                <span class="text-gray-400 text-xs ml-2">(${spot.category})</span>
-                            </div>
-                            
-                            <p class="text-gray-600 text-sm mb-4 italic flex-1">"${spot.review_text}..."</p>
-                            
-                            <div class="mt-auto border-t pt-4 text-xs text-gray-500 flex justify-between">
-                                <span><i class="fas fa-map-marker-alt"></i> Lat: ${spot.lat}</span>
-                                <span><i class="far fa-clock"></i> Ulasan Baru</span>
-                            </div>
+                             </div>
+                        </div>
+                        
+                        <a href="https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lon}" target="_blank" 
+                           class="mt-4 w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 rounded-lg text-center text-xs transition">
+                            <i class="fas fa-map-marker-alt mr-1"></i> Buka Peta
+                        </a>
+                    </div>
+                `;
+            });
+        }
+
+        function renderRelated(items) {
+            const container = document.getElementById('related-list');
+            container.innerHTML = '';
+            items.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl hover:bg-white/20 transition cursor-pointer group">
+                        <div class="flex justify-between items-start mb-2">
+                            <i class="fas fa-map-pin text-yellow-300 opacity-50 group-hover:opacity-100 transition"></i>
+                            <span class="text-[10px] text-indigo-200 font-mono">ID:${item.rating}</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-white mb-1 line-clamp-2 leading-tight">${item.place_name}</h4>
+                        <div class="mt-2 pt-2 border-t border-white/10 flex justify-between items-center">
+                             <span class="text-[10px] text-white/70">${item.category.split(' ')[1] || item.category}</span>
                         </div>
                     </div>
                 `;
-                container.innerHTML += card;
             });
-
-            document.getElementById('resultContainer').classList.remove('hidden');
         }
+        
+        initChips();
+        // SCRIPT REKOMENDASI SISTEM TOP 3 
+        // // Data Embed dari Python
+        // const allSpots = [{"place_name":"Beiji Park","category":"Wisata Buatan","price":15000,"lat":-8.17,"lon":111.08,"rating":3.8,"review_text":"Tempatnya sangat instagramable, cocok untuk anak-anak. Tiketnya standar."},{"place_name":"Etalase Geopark Gunung Sewu","category":"Wisata Budaya","price":0,"lat":-8.205,"lon":111.05,"rating":3.6,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Goa Gong","category":"Wisata Alam","price":20000,"lat":-8.165,"lon":111.025,"rating":3.6,"review_text":"Sangat indah, tapi akses jalan lumayan menantang. backpacker wajib kesini."},{"place_name":"Goa Tabuhan","category":"Wisata Alam","price":10000,"lat":-8.15,"lon":111.01,"rating":3.9,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Kampung Susu Lawu (Cabang)","category":"Wisata Buatan","price":20000,"lat":-8.18,"lon":111.12,"rating":3.8,"review_text":"Sangat bersih, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Masjid Agung Darul Falah","category":"Wisata Budaya","price":0,"lat":-8.2,"lon":111.095,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat ramai sekali."},{"place_name":"Monumen Jenderal Sudirman","category":"Wisata Budaya","price":5000,"lat":-8.12,"lon":111.18,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. anak-anak wajib kesini."},{"place_name":"Museum Song Terus","category":"Wisata Budaya","price":0,"lat":-8.14,"lon":111.005,"rating":4.0,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat sejuk sekali."},{"place_name":"Pantai Banyu Tibo","category":"Wisata Alam","price":10000,"lat":-8.22,"lon":110.98,"rating":4.0,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya edukatif."},{"place_name":"Pantai Kasap","category":"Wisata Alam","price":10000,"lat":-8.23,"lon":111.01,"rating":4.2,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat indah sekali."},{"place_name":"Pantai Klayar","category":"Wisata Alam","price":15000,"lat":-8.216,"lon":110.95,"rating":3.7,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat instagramable sekali."},{"place_name":"Pantai Pidakan","category":"Wisata Alam","price":5000,"lat":-8.25,"lon":111.2,"rating":4.0,"review_text":"Kurang edukatif dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Pantai Srau","category":"Wisata Alam","price":10000,"lat":-8.24,"lon":111.05,"rating":3.8,"review_text":"Sangat ramai, tapi akses jalan lumayan menantang. fotografer wajib kesini."},{"place_name":"Pantai Teleng Ria","category":"Wisata Alam","price":15000,"lat":-8.21,"lon":111.1,"rating":3.2,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya standar."},{"place_name":"Pantai Watukarung","category":"Wisata Alam","price":10000,"lat":-8.235,"lon":111.03,"rating":4.4,"review_text":"Tempatnya sangat bersih, cocok untuk anak-anak. Tiketnya terjangkau."},{"place_name":"Pemandian Banyu Anget","category":"Wisata Buatan","price":15000,"lat":-8.1,"lon":111.15,"rating":3.8,"review_text":"Salah satu destinasi terbaik di Pacitan. Suasananya instagramable."},{"place_name":"Rumah Masa Kecil SBY","category":"Wisata Budaya","price":0,"lat":-8.195,"lon":111.11,"rating":3.8,"review_text":"Luar biasa! Pengalaman tak terlupakan. Sangat megah sekali."},{"place_name":"Sentono Gentong","category":"Wisata Buatan","price":10000,"lat":-8.19,"lon":111.09,"rating":3.9,"review_text":"Tempatnya sangat sejuk, cocok untuk backpacker. Tiketnya terjangkau."},{"place_name":"Sungai Maron","category":"Wisata Alam","price":5000,"lat":-8.18,"lon":111.0,"rating":4.1,"review_text":"Kurang megah dibanding tempat lain, tapi lumayan untuk sekedar mampir."},{"place_name":"Taman Kota Pacitan","category":"Wisata Buatan","price":0,"lat":-8.2,"lon":111.1,"rating":4.5,"review_text":"Tempatnya sangat ramai, cocok untuk fotografer. Tiketnya terjangkau."}];
+
+        // function calculateDistance(lat1, lon1, lat2, lon2) {
+        //     // Rumus Euclidean sederhana untuk jarak dekat (cukup akurat untuk skala 1 kota)
+        //     // Hasil bukan KM akurat, tapi nilai relatif untuk sorting
+        //     const a = lat1 - lat2;
+        //     const b = lon1 - lon2;
+        //     return Math.sqrt(a*a + b*b);
+        // }
+
+        // function getRecommendations() {
+        //     const selectedCat = document.getElementById('categoryInput').value;
+        //     const maxBudget = parseInt(document.getElementById('budgetInput').value);
+
+        //     // 1. Filter Data (Kategori & Budget)
+        //     let filtered = allSpots.filter(spot => 
+        //         spot.category === selectedCat && 
+        //         spot.price <= maxBudget
+        //     );
+
+        //     if (filtered.length === 0) {
+        //         alert("Maaf, tidak ada wisata dengan kriteria tersebut. Coba naikkan budget.");
+        //         return;
+        //     }
+
+        //     // 2. Cari Ranking 1 (Rating Tertinggi)
+        //     // Sort by Rating Descending
+        //     filtered.sort((a, b) => b.rating - a.rating);
+        //     const topSpot = filtered[0]; // Juara 1
+
+        //     // 3. Cari 2 Tempat Lain yang Paling Dekat dengan Juara 1 (Nearest Neighbors)
+        //     // Kita hitung jarak semua sisa filtered ke topSpot
+        //     const others = filtered.slice(1).map(spot => {
+        //         spot.distanceToTop = calculateDistance(topSpot.lat, topSpot.lon, spot.lat, spot.lon);
+        //         return spot;
+        //     });
+
+        //     // Sort berdasarkan jarak terdekat
+        //     others.sort((a, b) => a.distanceToTop - b.distanceToTop);
+
+        //     // Gabungkan Juara 1 + 2 Terdekat
+        //     const finalRecs = [topSpot, ...others.slice(0, 2)];
+
+        //     // Render HTML
+        //     const container = document.getElementById('cardsWrapper');
+        //     container.innerHTML = '';
+            
+        //     finalRecs.forEach((spot, index) => {
+        //         let rankLabel = index === 0 ? "🏆 Pilihan Utama" : `📍 Rute Terdekat #${index}`;
+        //         let colorClass = index === 0 ? "border-yellow-400 border-2" : "border-gray-100";
+                
+        //         const card = `
+        //             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition ${colorClass} flex flex-col">
+        //                 <div class="p-1 bg-gray-100 text-xs text-center font-bold uppercase tracking-wide text-gray-600">
+        //                     ${rankLabel}
+        //                 </div>
+        //                 <div class="p-6 flex-1 flex flex-col">
+        //                     <div class="flex justify-between items-start mb-2">
+        //                         <h3 class="text-xl font-bold text-gray-900">${spot.place_name}</h3>
+        //                         <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">
+        //                             Rp ${spot.price.toLocaleString()}
+        //                         </span>
+        //                     </div>
+                            
+        //                     <div class="flex items-center mb-4">
+        //                         <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+        //                         <span class="font-bold text-gray-700">${spot.rating}</span>
+        //                         <span class="text-gray-400 text-xs ml-2">(${spot.category})</span>
+        //                     </div>
+                            
+        //                     <p class="text-gray-600 text-sm mb-4 italic flex-1">"${spot.review_text}..."</p>
+                            
+        //                     <div class="mt-auto border-t pt-4 text-xs text-gray-500 flex justify-between">
+        //                         <span><i class="fas fa-map-marker-alt"></i> Lat: ${spot.lat}</span>
+        //                         <span><i class="far fa-clock"></i> Ulasan Baru</span>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         `;
+        //         container.innerHTML += card;
+        //     });
+
+        //     document.getElementById('resultContainer').classList.remove('hidden');
+        // }
     </script>
 </body>
+
+
+    
 <footer class="bg-slate-950 text-white py-16 border-t border-white/5">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
@@ -858,6 +1129,7 @@
     </div>
 </footer>
 </html>
+
 
 
 
